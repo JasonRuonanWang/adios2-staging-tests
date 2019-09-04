@@ -149,7 +149,7 @@ class Adios_iotest(Campaign):
     params['reader']['decomposition']   = p.ParamCmdLineOption ('reader', 'decomposition', '-d', [])
 
     sweeps = []
-    for n in [8,512,1024,2048,4096]:
+    for n in [8,16,32,64,128,256,512,1024]:
         group_sweeps = get_sweeps (params, n*32)
         # pdb.set_trace()
         s_group = p.SweepGroup("{}-nodes".format(n),
