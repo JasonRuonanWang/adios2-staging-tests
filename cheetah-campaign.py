@@ -103,7 +103,7 @@ class Adios_iotest(Campaign):
 
     # A post-processing script to be run in the experiment directory after the experiment completes
     # For example, removing some large files after the experiment is done
-    run_post_process_script = None
+    run_post_process_script = 'cleanup.sh'
 
     # umask applied to your directory in the campaign so that colleagues can view files
     umask = '027'
