@@ -13,4 +13,5 @@ cheetah status \<campaign path\> options
 -n for summary
  
 Generate a performance report:
+
 cheetah generate-report \<campaign path\>
