@@ -37,7 +37,7 @@ def get_sweeps(ref_params_d, n_writers):
         par_r['reader']['decomposition'].values = [n_writers//r]
 
         # Loop over data size per process
-        for d in ['1MB', '2MB', '4MB', '8MB']:
+        for d in ['1MB', '16MB', '512MB']:
             par_r_d = copy.deepcopy(par_r)
             par_r_d['writer']['configfile'].values = ['staging-perf-test-{}-{}to1.txt'.format(d,r)]
             par_r_d['reader']['configfile'].values = ['staging-perf-test-{}-{}to1.txt'.format(d,r)]
