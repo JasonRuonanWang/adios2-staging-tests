@@ -37,7 +37,7 @@ def get_sweeps(ref_params_d, n_writers):
         par_r['reader']['decomposition'].values = [n_writers//r]
 
         # Loop over data size per process
-        for d in ['1MB', '16MB', '512MB']:
+        for d in ['1MB', '2MB', '4MB', '8MB']:
             par_r_d = copy.deepcopy(par_r)
             par_r_d['writer']['configfile'].values = ['staging-perf-test-{}-{}to1.txt'.format(d,r)]
             par_r_d['reader']['configfile'].values = ['staging-perf-test-{}-{}to1.txt'.format(d,r)]
@@ -149,12 +149,12 @@ class Adios_iotest(Campaign):
     params['reader']['decomposition']   = p.ParamCmdLineOption ('reader', 'decomposition', '-d', [])
 
     sweeps = []
-    for n in [8,16,32,64,128,256,512,1024]:
+    for n in [8,16,32,64,128]:
         group_sweeps = get_sweeps (params, n*32)
         # pdb.set_trace()
         s_group = p.SweepGroup("{}-nodes".format(n),
-                               walltime=3000,
-                               per_run_timeout=600,
+                               walltime=7200,
+                               per_run_timeout=3600,
                                component_inputs={'writer':input_files},
                                #nodes=128,
                                parameter_groups=group_sweeps,)
