@@ -31,19 +31,19 @@ def get_sweeps(ref_params_d, n_writers):
     all_sweeps = []
 
     # Loop over ratio of the no. of reader ranks
-    for r in [2,8]:
+    for r in [8]:
         par_r = copy.deepcopy(params_d)
         par_r['reader']['nprocs'].values = [n_writers//r]
         par_r['reader']['decomposition'].values = [n_writers//r]
 
         # Loop over data size per process
-        for d in ['1MB', '16MB', '512MB']:
+        for d in ['512MB']:
             par_r_d = copy.deepcopy(par_r)
             par_r_d['writer']['configfile'].values = ['staging-perf-test-{}-{}to1.txt'.format(d,r)]
             par_r_d['reader']['configfile'].values = ['staging-perf-test-{}-{}to1.txt'.format(d,r)]
 
             # Loop over engines
-            for e in ["bp4","sst-rdma","sst-tcp","ssc"]:
+            for e in ["bp4","sst-rdma","sst-tcp","ssc","insitumpi"]:
                 par_r_d_e = copy.deepcopy(par_r_d)
                 par_r_d_e['writer']['xmlfile'].values = ['staging-perf-test-{}.xml'.format(e)]
                 par_r_d_e['reader']['xmlfile'].values = ['staging-perf-test-{}.xml'.format(e)]
@@ -127,7 +127,8 @@ class Adios_iotest(Campaign):
         'staging-perf-test-insitumpi.xml',
         'staging-perf-test-ssc.xml',
         'staging-perf-test-sst-rdma.xml',
-        'staging-perf-test-sst-tcp.xml']
+        'staging-perf-test-sst-tcp.xml'
+    ]
 
     # Create the sweep parameters for a sweep
     params = {}
@@ -149,12 +150,12 @@ class Adios_iotest(Campaign):
     params['reader']['decomposition']   = p.ParamCmdLineOption ('reader', 'decomposition', '-d', [])
 
     sweeps = []
-    for n in [8,16,32,64,128]:
+    for n in [8]:
         group_sweeps = get_sweeps (params, n*32)
         # pdb.set_trace()
         s_group = p.SweepGroup("{}-nodes".format(n),
                                walltime=7200,
-                               per_run_timeout=3600,
+                               per_run_timeout=600,
                                component_inputs={'writer':input_files},
                                #nodes=128,
                                parameter_groups=group_sweeps,)

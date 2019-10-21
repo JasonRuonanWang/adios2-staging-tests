@@ -1,5 +1,6 @@
 module load gcc/6.4.0
 module load python
+module load cmake
 
 alias gcc='/sw/summit/gcc/6.4.0/bin/gcc'
 alias g++='/sw/summit/gcc/6.4.0/bin/g++'

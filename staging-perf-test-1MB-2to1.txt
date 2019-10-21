@@ -37,25 +37,20 @@ group  io_T2_out
 
 # Task 1 actions
 app 1
-  steps  10 
-  sleep   30.0      
+  steps  10
     # write all of io_T1 into stream_T1.bp
   write   stream_T1.bp    io_T1
 
 
 # Task 2 actions
 app 2
-  steps   over stream_T1.bp   
+  steps   over stream_T1.bp
   # read stream_T1.bp using io_T2_in definition with a timeout
-  read  next  stream_T1.bp    io_T2_in  5.0  
+  read  next  stream_T1.bp    io_T2_in  5.0
 
   # Sleep and write only if read was successful:
-  cond stream_T1.bp   sleep   2.0      
+  cond stream_T1.bp   sleep   2.0
   # write io_T2 into stream_T2.bp
-  cond stream_T1.bp   write   stream_T2.bp    io_T2_out  
-
-  sleep   0.1
-
-
+  cond stream_T1.bp   write   stream_T2.bp    io_T2_out
 
 

@@ -1,5 +1,5 @@
 # Data is set up to be 512MB per process when running in weak-scaling mode
-# Reader must be run 1/8 of the size of the Writer code 
+# Reader must be run 1/8 of the size of the Writer code
 #   e.g 16 writers, 2 readers
 #   mpirun -n 16 /opt/adios2/bin/adios_iotest -a 1 -c staging-perf-test-512MB-8to1.txt -w -x staging-perf-test-bp4.xml -t -d 16
 #   mpirun -n 2  /opt/adios2/bin/adios_iotest -a 2 -c staging-perf-test-512MB-8to1.txt -w -x staging-perf-test-bp4.xml -t -d 2
@@ -32,23 +32,16 @@ group  io_T2_in
 
 # Task 1 actions
 app 1
-  steps  10 
-  sleep  30.0  
+  steps  10
     # write all of io_T1 into stream_T1.bp
   write   stream_T1.bp    io_T1
 
-
 # Task 2 actions
 app 2
-  steps   over stream_T1.bp   
+  steps   over stream_T1.bp
   # read stream_T1.bp using io_T2_in definition with a timeout
-  read  next  stream_T1.bp    io_T2_in  5.0  
+  read  next  stream_T1.bp    io_T2_in  5.0
 
   # Compute/Sleep only if read was successful:
-  cond stream_T1.bp   sleep   2.0   
-
-  sleep   0.1
-
-
-
+  cond stream_T1.bp   sleep   2.0
 
