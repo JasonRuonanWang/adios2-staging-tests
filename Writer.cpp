@@ -7,27 +7,26 @@
 #include <chrono>
 #include <map>
 
-std::string ioName = "test";
-std::string fileName = "hello";
-adios2::Params engineParams = {
-    {"IPAddress", "127.0.0.1"},
-    {"Verbose", "11"},
-};
-
-int writerRank, writerSize;
-int worldRank, worldSize;
+adios2::Params engineParams = {};
 
 size_t steps = 100;
 
-std::map<std::string, std::chrono::duration<double>> durations;
-
-void runTest(const std::string &adiosEngine)
+int main(int argc, char *argv[])
 {
-    MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
-    MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
+
+    std::string adiosEngine = "ssc";
+
+    if(argc == 2)
+    {
+        adiosEngine = argv[1];
+    }
 
     int color=0;
-
+    MPI_Init(&argc, &argv);
+    int writerRank, writerSize;
+    int worldRank, worldSize;
+    MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
+    MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
     MPI_Comm writerComm;
     MPI_Comm_split(MPI_COMM_WORLD, color, worldRank, &writerComm);
     MPI_Comm_rank(writerComm, &writerRank);
@@ -48,13 +47,14 @@ void runTest(const std::string &adiosEngine)
     }
 
     adios2::ADIOS adios(writerComm, adios2::DebugON);
-    adios2::IO io = adios.DeclareIO(ioName);
+    adios2::IO io = adios.DeclareIO("TestIO");
     io.SetEngine(adiosEngine);
     io.SetParameters(engineParams);
 
-    adios2::Engine engine = io.Open(fileName, adios2::Mode::Write);
+    adios2::Engine engine = io.Open("Test", adios2::Mode::Write);
     auto bpFloats = io.DefineVariable<float>("bpFloats", shape, start, count);
 
+    MPI_Barrier(writerComm);
     auto timerStart = std::chrono::system_clock::now();
     for (int i = 0; i < steps; ++i)
     {
@@ -62,28 +62,17 @@ void runTest(const std::string &adiosEngine)
         engine.Put(bpFloats, myFloats.data());
         engine.EndStep();
     }
+    MPI_Barrier(writerComm);
     auto timerEnd = std::chrono::system_clock::now();
-    durations[adiosEngine] = timerEnd - timerStart;
+    std::chrono::duration<double> duration = timerEnd - timerStart;
+    if(worldRank == 0)
+    {
+        std::cout << adiosEngine << " time " << duration.count() << " seconds" << std::endl;
+    }
 
     engine.Close();
 
-}
-
-int main(int argc, char *argv[])
-{
-    MPI_Init(&argc, &argv);
-
-    runTest("insitumpi");
-
     MPI_Finalize();
-
-    if(worldRank == 0)
-    {
-        for(const auto &i : durations)
-        {
-            std::cout << i.first << " time " << i.second.count() << " seconds" << std::endl;
-        }
-    }
 
     return 0;
 }

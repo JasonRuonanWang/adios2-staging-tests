@@ -5,46 +5,42 @@
 #include <vector>
 #include <adios2.h>
 
-std::string ioName = "test";
-std::string fileName = "hello";
-adios2::Params engineParams = {
-    {"IPAddress", "127.0.0.1"},
-    {"Verbose", "11"},
-};
+adios2::Params engineParams = {};
 
-size_t steps = 10;
-
-int readerRank, readerSize;
-int worldRank, worldSize;
-
-void runTest(const std::string &adiosEngine)
+int main(int argc, char *argv[])
 {
+    std::string adiosEngine = "ssc";
+
+    if(argc == 2)
+    {
+        adiosEngine = argv[1];
+    }
+
     std::cout << "Reader begin " << adiosEngine << std::endl;
 
+    int color=1;
+    MPI_Init(&argc, &argv);
+    int readerRank, readerSize;
+    int worldRank, worldSize;
     MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
     MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
-
-    int color=1;
-
     MPI_Comm readerComm;
     MPI_Comm_split(MPI_COMM_WORLD, color, worldRank, &readerComm);
     MPI_Comm_rank(readerComm, &readerRank);
     MPI_Comm_size(readerComm, &readerSize);
 
+    int wrRatio = (worldSize - readerSize) / readerSize;
+
     std::vector<float> myFloats;
     adios2::ADIOS adios(readerComm);
-    adios2::IO io = adios.DeclareIO(ioName);
+    adios2::IO io = adios.DeclareIO("TestIO");
     io.SetEngine(adiosEngine);
     io.SetParameters(engineParams);
-    adios2::Engine engine = io.Open(fileName, adios2::Mode::Read);
+    adios2::Engine engine = io.Open("Test", adios2::Mode::Read);
 
-    auto bpFloats = io.InquireVariable<float>("bpFloats");
-
-    adios2::Dims start({(size_t)readerRank*10, 0});
-    adios2::Dims count({10, 1000000});
-
+    adios2::Dims start({(size_t)readerRank*wrRatio, 0});
+    adios2::Dims count({(size_t)wrRatio, 1000000});
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
-    bpFloats.SetSelection({start, count});
     myFloats.resize(datasize);
 
     while(true)
@@ -54,39 +50,39 @@ void runTest(const std::string &adiosEngine)
         {
             break;
         }
+        auto bpFloats = io.InquireVariable<float>("bpFloats");
+        bpFloats.SetSelection({start, count});
 
         engine.Get(bpFloats, myFloats.data());
 
         std::cout << "Engine " << adiosEngine << " Step " << engine.CurrentStep() << std::endl;
         engine.EndStep();
 
-        size_t s=0;
-        for(auto i : myFloats){
-            if(s < 32)
-            {
-                std::cout << i << "   ";
-            }
-            ++s;
-            if(s == bpFloats.Shape()[1])
-            {
-                std::cout << std::endl;
-                s=0;
-            }
-        }
-        std::cout << std::endl;
     }
 
-    std::cout << "Final Step " << engine.CurrentStep() << std::endl;
+    for(int r=0; r<readerSize; ++r)
+    {
+        MPI_Barrier(readerComm);
+        if(r == readerRank)
+        {
+            size_t s=0;
+            for(auto i : myFloats){
+                if(s < 32)
+                {
+                    std::cout << i << "   ";
+                }
+                ++s;
+                if(s == count[1])
+                {
+                    std::cout << std::endl;
+                    s=0;
+                }
+            }
+            std::cout << std::endl;
+        }
+    }
 
     engine.Close();
-
-}
-
-int main(int argc, char *argv[])
-{
-    MPI_Init(&argc, &argv);
-
-    runTest("insitumpi");
 
     MPI_Finalize();
     return 0;
