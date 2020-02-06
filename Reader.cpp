@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         {
             size_t s=0;
             for(auto i : myFloats){
-                if(s < 32)
+                if(s < 16)
                 {
                     std::cout << i << "   ";
                 }
