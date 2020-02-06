@@ -3,4 +3,4 @@ all:
 	mpic++ Reader.cpp -g -o reader -ladios2 -std=c++11
 
 d:
-	rm -rf *.sst job_* core.*
+	rm -rf *.sst job_* core.* *.erf *.job
