@@ -16,8 +16,6 @@ int main(int argc, char *argv[])
         adiosEngine = argv[1];
     }
 
-    std::cout << "Reader begin " << adiosEngine << std::endl;
-
     int color=1;
     MPI_Init(&argc, &argv);
     int readerRank, readerSize;
@@ -52,10 +50,9 @@ int main(int argc, char *argv[])
         }
         auto bpFloats = io.InquireVariable<float>("bpFloats");
         bpFloats.SetSelection({start, count});
-
         engine.Get(bpFloats, myFloats.data());
 
-        std::cout << "Engine " << adiosEngine << " Step " << engine.CurrentStep() << std::endl;
+        if(readerRank == 0) std::cout << "Engine " << adiosEngine << " Step " << engine.CurrentStep() << std::endl;
         engine.EndStep();
 
     }

@@ -7,7 +7,7 @@
 #include <chrono>
 #include <map>
 
-adios2::Params engineParams = {};
+adios2::Params engineParams = {{"QueueLimit","1"}, {"QueueFullPolicy","Block"}};
 
 size_t steps = 100;
 
@@ -67,7 +67,9 @@ int main(int argc, char *argv[])
     std::chrono::duration<double> duration = timerEnd - timerStart;
     if(worldRank == 0)
     {
+        std::cout << "===============================================================" << std::endl;
         std::cout << adiosEngine << " time " << duration.count() << " seconds" << std::endl;
+        std::cout << "===============================================================" << std::endl;
     }
 
     engine.Close();
