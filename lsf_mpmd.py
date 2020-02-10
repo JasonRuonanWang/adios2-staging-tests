@@ -14,6 +14,7 @@ params["oversubscribe_gpu"] = "allow"
 params["launch_distribution"] = "packed"
 
 rankCurrent = 0
+rankbCurrent = 0
 appCurrent = 0
 cpuCurrent = 0
 nodes = 0
@@ -51,7 +52,7 @@ for key, value in params.items():
 
 for app in ranks:
     for rank in range(app):
-        if rankCurrent % ranksPerNode == 0:
+        if rankbCurrent % ranksPerNode == 0:
             cpuCurrent = 0
             nodes = nodes + 1
         line = "rank: {0}: {{ host: {1}; cpu: {{{2}-{3}}} }} : app {4}".format(rankCurrent, nodes, cpuCurrent, cpuCurrent + 3, appCurrent)
@@ -60,7 +61,10 @@ for app in ranks:
         ImpiErf.write(line + "\n")
         cpuCurrent = cpuCurrent + cpusPerRank
         rankCurrent = rankCurrent + 1
+        rankbCurrent = rankbCurrent + 1
     appCurrent = appCurrent + 1
+    cpuCurrent = 0
+    rankbCurrent = 0
 
 fileJob.write("#!/bin/bash" + "\n")
 fileJob.write("#BSUB -P {0}".format(project) + "\n")

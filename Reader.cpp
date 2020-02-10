@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(readerComm, &readerRank);
     MPI_Comm_size(readerComm, &readerSize);
 
+    if(readerRank == 0) std::cout << "Engine " << adiosEngine << " started " << std::endl;
+
     int wrRatio = (worldSize - readerSize) / readerSize;
 
     std::vector<float> myFloats;
@@ -41,6 +43,13 @@ int main(int argc, char *argv[])
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
     myFloats.resize(datasize);
 
+    adios2::Variable<float> bpFloats;
+    if(adiosEngine == "ssc")
+    {
+        bpFloats = io.InquireVariable<float>("bpFloats");
+        bpFloats.SetSelection({start, count});
+    }
+
     while(true)
     {
         auto ret = engine.BeginStep();
@@ -48,8 +57,10 @@ int main(int argc, char *argv[])
         {
             break;
         }
-        auto bpFloats = io.InquireVariable<float>("bpFloats");
+
+        bpFloats = io.InquireVariable<float>("bpFloats");
         bpFloats.SetSelection({start, count});
+
         engine.Get(bpFloats, myFloats.data());
 
         if(readerRank == 0) std::cout << "Engine " << adiosEngine << " Step " << engine.CurrentStep() << std::endl;
