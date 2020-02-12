@@ -43,9 +43,9 @@ ImpiJob = open(filename + ".impi.job","w")
 
 s = 0
 for app in appsFullPath:
-    SscErf.write("app {0}: {1} ssc 10000".format(s, app) + "\n")
+    SscErf.write("app {0}: {1} ssc 5000".format(s, app) + "\n")
+    ImpiErf.write("app {0}: {1} insitumpi 5000".format(s, app) + "\n")
     SstErf.write("app {0}: {1} sst 100".format(s, app) + "\n")
-    ImpiErf.write("app {0}: {1} insitumpi 10000".format(s, app) + "\n")
     s = s + 1
 
 for key, value in params.items():
@@ -63,6 +63,8 @@ for app in ranks:
         SstErf.write(line + "\n")
         ImpiErf.write(line + "\n")
         cpuCurrent = cpuCurrent + cpusPerRank
+        if cpuCurrent == 84:
+            cpuCurrent = 88
         rankCurrent = rankCurrent + 1
         rankbCurrent = rankbCurrent + 1
     appCurrent = appCurrent + 1
