@@ -16,9 +16,14 @@ int main(int argc, char *argv[])
 
     std::string adiosEngine = "ssc";
 
-    if(argc == 2)
+    if(argc >= 2)
     {
         adiosEngine = argv[1];
+    }
+
+    if(argc >= 3)
+    {
+        steps = atoi(argv[2]);
     }
 
     int color=0;

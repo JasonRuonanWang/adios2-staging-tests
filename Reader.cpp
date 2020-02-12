@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     std::string adiosEngine = "ssc";
 
-    if(argc == 2)
+    if(argc >= 2)
     {
         adiosEngine = argv[1];
     }
