@@ -93,5 +93,6 @@ int main(int argc, char *argv[])
     engine.Close();
 
     MPI_Finalize();
+    if(readerRank == 0) std::cout << "Engine " << adiosEngine << " finished " << std::endl;
     return 0;
 }

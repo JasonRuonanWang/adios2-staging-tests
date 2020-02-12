@@ -36,7 +36,10 @@ ranksTotal = sum(ranks)
 SscErf = open(filename + ".ssc.erf","w")
 SstErf = open(filename + ".sst.erf","w")
 ImpiErf = open(filename + ".impi.erf","w")
-fileJob = open(filename + ".job","w")
+
+SscJob = open(filename + ".ssc.job","w")
+SstJob = open(filename + ".sst.job","w")
+ImpiJob = open(filename + ".impi.job","w")
 
 s = 0
 for app in appsFullPath:
@@ -66,12 +69,31 @@ for app in ranks:
     cpuCurrent = 0
     rankbCurrent = 0
 
-fileJob.write("#!/bin/bash" + "\n")
-fileJob.write("#BSUB -P {0}".format(project) + "\n")
-fileJob.write("#BSUB -J job_{0}".format(filename) + "\n")
-fileJob.write("#BSUB -W 2:00" + "\n")
-fileJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
-fileJob.write("cd {0}".format(os.getcwd()) + "\n")
-fileJob.write("jsrun --erf_input {0}/{1}.impi.erf".format(os.getcwd(),filename) + "\n")
-fileJob.write("jsrun --erf_input {0}/{1}.ssc.erf".format(os.getcwd(),filename) + "\n")
-fileJob.write("jsrun --erf_input {0}/{1}.sst.erf".format(os.getcwd(),filename) + "\n")
+SscJob.write("#!/bin/bash" + "\n")
+SscJob.write("#BSUB -P {0}".format(project) + "\n")
+SscJob.write("#BSUB -J job_ssc_{0}".format(filename) + "\n")
+SscJob.write("#BSUB -W 2:00" + "\n")
+SscJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
+SscJob.write("cd {0}".format(os.getcwd()) + "\n")
+SscJob.write("jsrun --erf_input {0}/{1}.ssc.erf".format(os.getcwd(),filename) + "\n")
+
+
+SstJob.write("#!/bin/bash" + "\n")
+SstJob.write("#BSUB -P {0}".format(project) + "\n")
+SstJob.write("#BSUB -J job_sst_{0}".format(filename) + "\n")
+SstJob.write("#BSUB -W 2:00" + "\n")
+SstJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
+SstJob.write("cd {0}".format(os.getcwd()) + "\n")
+SstJob.write("jsrun --erf_input {0}/{1}.sst.erf".format(os.getcwd(),filename) + "\n")
+
+
+ImpiJob.write("#!/bin/bash" + "\n")
+ImpiJob.write("#BSUB -P {0}".format(project) + "\n")
+ImpiJob.write("#BSUB -J job_impi_{0}".format(filename) + "\n")
+ImpiJob.write("#BSUB -W 2:00" + "\n")
+ImpiJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
+ImpiJob.write("cd {0}".format(os.getcwd()) + "\n")
+ImpiJob.write("jsrun --erf_input {0}/{1}.impi.erf".format(os.getcwd(),filename) + "\n")
+
+
+
