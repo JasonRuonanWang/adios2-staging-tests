@@ -43,8 +43,8 @@ ImpiJob = open(filename + ".impi.job","w")
 
 s = 0
 for app in appsFullPath:
-    SscErf.write("app {0}: {1} ssc 5000".format(s, app) + "\n")
-    ImpiErf.write("app {0}: {1} insitumpi 5000".format(s, app) + "\n")
+    SscErf.write("app {0}: {1} ssc 1000".format(s, app) + "\n")
+    ImpiErf.write("app {0}: {1} insitumpi 1000".format(s, app) + "\n")
     SstErf.write("app {0}: {1} sst 100".format(s, app) + "\n")
     s = s + 1
 

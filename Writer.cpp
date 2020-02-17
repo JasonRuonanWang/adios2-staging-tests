@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
     adios2::Engine engine = io.Open("Test", adios2::Mode::Write);
     auto bpFloats = io.DefineVariable<float>("bpFloats", shape, start, count);
 
+    engine.LockWriterDefinitions();
+
     MPI_Barrier(writerComm);
     auto timerStart = std::chrono::system_clock::now();
     for (int i = 0; i < steps; ++i)
