@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     {
         if(writerRank == 0)
         {
-            std::cout << "Engine " << adiosEngine << " Step " << engine.CurrentStep() << " Duration " << duration.count() << std::endl;
+            std::cout << "Engine " << adiosEngine << " Step " << step << " Duration " << duration.count() << std::endl;
         }
         engine.BeginStep();
         engine.Put(bpFloats, myFloats.data());

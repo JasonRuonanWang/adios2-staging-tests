@@ -2,6 +2,7 @@ import sys
 import os
 
 project = "CSC143"
+walltime = 20
 
 ranksPerNode = 40
 cpusPerRank = 4
@@ -74,7 +75,7 @@ for app in ranks:
 SscJob.write("#!/bin/bash" + "\n")
 SscJob.write("#BSUB -P {0}".format(project) + "\n")
 SscJob.write("#BSUB -J job_ssc_{0}".format(filename) + "\n")
-SscJob.write("#BSUB -W 2:00" + "\n")
+SscJob.write("#BSUB -W {0}".format(walltime) + "\n")
 SscJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
 SscJob.write("cd {0}".format(os.getcwd()) + "\n")
 SscJob.write("jsrun --erf_input {0}/{1}.ssc.erf".format(os.getcwd(),filename) + "\n")
@@ -83,7 +84,7 @@ SscJob.write("jsrun --erf_input {0}/{1}.ssc.erf".format(os.getcwd(),filename) + 
 SstJob.write("#!/bin/bash" + "\n")
 SstJob.write("#BSUB -P {0}".format(project) + "\n")
 SstJob.write("#BSUB -J job_sst_{0}".format(filename) + "\n")
-SstJob.write("#BSUB -W 2:00" + "\n")
+SstJob.write("#BSUB -W {0}".format(walltime) + "\n")
 SstJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
 SstJob.write("cd {0}".format(os.getcwd()) + "\n")
 SstJob.write("jsrun --erf_input {0}/{1}.sst.erf".format(os.getcwd(),filename) + "\n")
@@ -92,7 +93,7 @@ SstJob.write("jsrun --erf_input {0}/{1}.sst.erf".format(os.getcwd(),filename) + 
 ImpiJob.write("#!/bin/bash" + "\n")
 ImpiJob.write("#BSUB -P {0}".format(project) + "\n")
 ImpiJob.write("#BSUB -J job_impi_{0}".format(filename) + "\n")
-ImpiJob.write("#BSUB -W 2:00" + "\n")
+ImpiJob.write("#BSUB -W {0}".format(walltime) + "\n")
 ImpiJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
 ImpiJob.write("cd {0}".format(os.getcwd()) + "\n")
 ImpiJob.write("jsrun --erf_input {0}/{1}.impi.erf".format(os.getcwd(),filename) + "\n")
