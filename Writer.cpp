@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     std::chrono::duration<double> duration;
 
     size_t step = 0;
-    while (duration.count() < 10)
+    while (duration.count() < 600)
     {
         if(writerRank == 0)
         {
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     if(worldRank == 0)
     {
         std::cout << "===============================================================" << std::endl;
-        std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, data rate " <<  totalDatasize / duration.count() / 1000000 << " MB/s" << std::endl;
+        std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, data rate " <<  totalDatasize / duration.count() / 1000000000 << " GB/s" << std::endl;
         std::cout << "===============================================================" << std::endl;
     }
 
