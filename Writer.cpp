@@ -9,6 +9,8 @@
 
 adios2::Params engineParams = {{"QueueLimit","1"}, {"QueueFullPolicy","Block"}};
 
+double walltime = 1;
+
 int main(int argc, char *argv[])
 {
 
@@ -17,6 +19,11 @@ int main(int argc, char *argv[])
     if(argc >= 2)
     {
         adiosEngine = argv[1];
+    }
+
+    if(argc >= 3)
+    {
+        walltime = 60 * std::stoi(argv[2]);
     }
 
     int color=0;
@@ -60,7 +67,7 @@ int main(int argc, char *argv[])
     std::chrono::duration<double> duration;
 
     size_t step = 0;
-    while (duration.count() < 600)
+    while (duration.count() < walltime)
     {
         if(writerRank == 0)
         {
