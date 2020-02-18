@@ -7,7 +7,11 @@
 #include <chrono>
 #include <map>
 
-adios2::Params engineParams = {{"QueueLimit","1"}, {"QueueFullPolicy","Block"}};
+adios2::Params engineParams = {
+    {"DataTransport","RDMA"},
+    {"ControlTransport","Scalable"},
+    {"QueueLimit","1"},
+    {"QueueFullPolicy","Block"}};
 
 double walltime = 1;
 
