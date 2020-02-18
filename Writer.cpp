@@ -63,19 +63,27 @@ int main(int argc, char *argv[])
 
     MPI_Barrier(writerComm);
     auto timerStart = std::chrono::system_clock::now();
-    for (int i = 0; i < steps; ++i)
+    auto timerNow = std::chrono::system_clock::now();
+    std::chrono::duration<double> duration;
+
+    size_t step = 0;
+    while (duration.count() < 1200)
     {
         engine.BeginStep();
         engine.Put(bpFloats, myFloats.data());
         engine.EndStep();
+        timerNow = std::chrono::system_clock::now();
+        duration = timerNow - timerStart;
+        ++ step;
     }
+
+    size_t totalDatasize = 4000000 * step * writerSize;
+
     MPI_Barrier(writerComm);
-    auto timerEnd = std::chrono::system_clock::now();
-    std::chrono::duration<double> duration = timerEnd - timerStart;
     if(worldRank == 0)
     {
         std::cout << "===============================================================" << std::endl;
-        std::cout << adiosEngine << " time " << duration.count() << " seconds" << std::endl;
+        std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, data rate " <<  totalDatasize / duration.count() << std::endl;
         std::cout << "===============================================================" << std::endl;
     }
 
