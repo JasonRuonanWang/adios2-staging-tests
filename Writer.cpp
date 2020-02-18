@@ -9,8 +9,6 @@
 
 adios2::Params engineParams = {{"QueueLimit","1"}, {"QueueFullPolicy","Block"}};
 
-size_t steps = 100;
-
 int main(int argc, char *argv[])
 {
 
@@ -19,11 +17,6 @@ int main(int argc, char *argv[])
     if(argc >= 2)
     {
         adiosEngine = argv[1];
-    }
-
-    if(argc >= 3)
-    {
-        steps = atoi(argv[2]);
     }
 
     int color=0;
@@ -84,7 +77,7 @@ int main(int argc, char *argv[])
     size_t totalDatasize = 4000000 * step * writerSize;
 
     MPI_Barrier(writerComm);
-    if(worldRank == 0)
+    if(writerRank == 0)
     {
         std::cout << "===============================================================" << std::endl;
         std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, data rate " <<  totalDatasize / duration.count() / 1000000 << " MB/s" << std::endl;
