@@ -61,10 +61,6 @@ int main(int argc, char *argv[])
         bpFloats = io.InquireVariable<float>("bpFloats");
         bpFloats.SetSelection({start, count});
         engine.Get(bpFloats, myFloats.data());
-        if(readerRank == 0)
-        {
-            std::cout << "Engine " << adiosEngine << " Step " << engine.CurrentStep() << std::endl;
-        }
         engine.LockReaderSelections();
         engine.EndStep();
     }
