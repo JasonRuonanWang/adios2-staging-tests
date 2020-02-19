@@ -87,7 +87,6 @@ int main(int argc, char *argv[])
 
     engine.Close();
 
-    MPI_Barrier(writerComm);
 
     size_t totalDatasize = 4000000 * step * writerSize;
     timerNow = std::chrono::system_clock::now();
@@ -99,6 +98,8 @@ int main(int argc, char *argv[])
         std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, " << "total data size " << totalDatasize / 1000000000 << " GB, data rate " <<  totalDatasize / duration.count() / 1000000000 << " GB/s" << std::endl;
         std::cout << "===============================================================" << std::endl;
     }
+
+    MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize();
 

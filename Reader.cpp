@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
 
     engine.Close();
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
     for(int r=0; r<readerSize; ++r)
     {
         MPI_Barrier(readerComm);
