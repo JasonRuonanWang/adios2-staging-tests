@@ -64,6 +64,8 @@ int main(int argc, char *argv[])
         engine.EndStep();
     }
 
+    engine.Close();
+
     for(int r=0; r<readerSize; ++r)
     {
         MPI_Barrier(readerComm);
@@ -86,7 +88,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    engine.Close();
 
     MPI_Finalize();
     if(readerRank == 0) std::cout << "Engine " << adiosEngine << " finished " << std::endl;
