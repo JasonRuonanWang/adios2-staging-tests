@@ -55,6 +55,10 @@ int main(int argc, char *argv[])
         }
     }
 
+    auto timerStart = std::chrono::system_clock::now();
+    auto timerNow = std::chrono::system_clock::now();
+    std::chrono::duration<double> duration;
+
     adios2::ADIOS adios(writerComm, adios2::DebugON);
     adios2::IO io = adios.DeclareIO("TestIO");
     io.SetEngine(adiosEngine);
@@ -66,12 +70,9 @@ int main(int argc, char *argv[])
     engine.LockWriterDefinitions();
 
     MPI_Barrier(writerComm);
-    auto timerStart = std::chrono::system_clock::now();
-    auto timerNow = std::chrono::system_clock::now();
-    std::chrono::duration<double> duration;
 
     size_t step;
-    for(step = 0; step < 200; ++step)
+    for(step = 0; step < 1000; ++step)
     {
         timerNow = std::chrono::system_clock::now();
         duration = timerNow - timerStart;
@@ -84,6 +85,8 @@ int main(int argc, char *argv[])
         engine.EndStep();
     }
 
+    engine.Close();
+
     MPI_Barrier(writerComm);
 
     size_t totalDatasize = 4000000 * step * writerSize;
@@ -93,11 +96,9 @@ int main(int argc, char *argv[])
     if(writerRank == 0)
     {
         std::cout << "===============================================================" << std::endl;
-        std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, data rate " <<  totalDatasize / duration.count() / 1000000000 << " GB/s" << std::endl;
+        std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, " << "total data size " << totalDatasize / 1000000000 << " GB, data rate " <<  totalDatasize / duration.count() / 1000000000 << " GB/s" << std::endl;
         std::cout << "===============================================================" << std::endl;
     }
-
-    engine.Close();
 
     MPI_Finalize();
 
