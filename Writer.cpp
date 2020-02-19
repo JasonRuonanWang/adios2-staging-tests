@@ -70,9 +70,11 @@ int main(int argc, char *argv[])
     auto timerNow = std::chrono::system_clock::now();
     std::chrono::duration<double> duration;
 
-    size_t step = 0;
-    while (duration.count() < walltime)
+    size_t step;
+    for(step = 0; step < 200; ++step)
     {
+        timerNow = std::chrono::system_clock::now();
+        duration = timerNow - timerStart;
         if(writerRank == 0)
         {
             std::cout << "Engine " << adiosEngine << " Step " << step << " Duration " << duration.count() << std::endl;
@@ -80,14 +82,14 @@ int main(int argc, char *argv[])
         engine.BeginStep();
         engine.Put(bpFloats, myFloats.data());
         engine.EndStep();
-        timerNow = std::chrono::system_clock::now();
-        duration = timerNow - timerStart;
-        ++ step;
     }
 
-    size_t totalDatasize = 4000000 * step * writerSize;
-
     MPI_Barrier(writerComm);
+
+    size_t totalDatasize = 4000000 * step * writerSize;
+    timerNow = std::chrono::system_clock::now();
+    duration = timerNow - timerStart;
+
     if(writerRank == 0)
     {
         std::cout << "===============================================================" << std::endl;

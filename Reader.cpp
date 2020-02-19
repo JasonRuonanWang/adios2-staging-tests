@@ -55,10 +55,6 @@ int main(int argc, char *argv[])
         auto ret = engine.BeginStep();
         if(ret == adios2::StepStatus::EndOfStream)
         {
-            if(readerRank == 0)
-            {
-                std::cout << "Engine " << adiosEngine << " final step " << engine.CurrentStep() << std::endl;
-            }
             break;
         }
         bpFloats = io.InquireVariable<float>("bpFloats");
