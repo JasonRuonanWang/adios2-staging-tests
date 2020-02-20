@@ -62,13 +62,7 @@ int main(int argc, char *argv[])
     std::vector<std::complex<float>> vecCfloats(datasize);
     std::vector<std::complex<double>> vecDfloats(datasize);
 
-    for (size_t i = 0; i < count[1]; ++i)
-    {
-        for (size_t j = 0; j < count[0]; ++j)
-        {
-            vecFloats[i*count[0] +j] = writerRank*10000 + i*count[0] +j;
-        }
-    }
+    GenData(vecFloats, 0, start, count, shape);
 
     auto timerStart = std::chrono::system_clock::now();
     auto timerNow = std::chrono::system_clock::now();

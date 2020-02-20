@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
     myFloats.resize(datasize);
 
-    adios2::Variable<float> bpFloats;
+    adios2::Variable<float> varFloats;
     if(adiosEngine == "ssc")
     {
-        bpFloats = io.InquireVariable<float>("bpFloats");
-        bpFloats.SetSelection({start, count});
+        varFloats = io.InquireVariable<float>("varFloats");
+        varFloats.SetSelection({start, count});
     }
 
     while(true)
@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
         {
             break;
         }
-        bpFloats = io.InquireVariable<float>("bpFloats");
-        bpFloats.SetSelection({start, count});
-        engine.Get(bpFloats, myFloats.data());
+        varFloats = io.InquireVariable<float>("varFloats");
+        varFloats.SetSelection({start, count});
+        engine.Get(varFloats, myFloats.data());
         engine.LockReaderSelections();
         engine.EndStep();
     }
