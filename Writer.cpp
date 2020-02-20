@@ -6,6 +6,9 @@
 #include <vector>
 #include <chrono>
 #include <map>
+#include "common.h"
+
+
 
 adios2::Params engineParams = {
     {"DataTransport","RDMA"},
@@ -46,12 +49,24 @@ int main(int argc, char *argv[])
     adios2::Dims count({1, 1000000});
 
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
-    std::vector<float> myFloats(datasize);
+    std::vector<signed char> vecChars(datasize);
+    std::vector<unsigned char> vecUchars(datasize);
+    std::vector<signed short> vecShorts(datasize);
+    std::vector<unsigned short> vecUshorts(datasize);
+    std::vector<signed int> vecInts(datasize);
+    std::vector<unsigned int> vecUints(datasize);
+    std::vector<signed long> vecLongs(datasize);
+    std::vector<unsigned long> vecULongs(datasize);
+    std::vector<float> vecFloats(datasize);
+    std::vector<double> vecDoubles(datasize);
+    std::vector<std::complex<float>> vecCfloats(datasize);
+    std::vector<std::complex<double>> vecDfloats(datasize);
+
     for (size_t i = 0; i < count[1]; ++i)
     {
         for (size_t j = 0; j < count[0]; ++j)
         {
-            myFloats[i*count[0] +j] = writerRank*10000 + i*count[0] +j;
+            vecFloats[i*count[0] +j] = writerRank*10000 + i*count[0] +j;
         }
     }
 
@@ -65,15 +80,16 @@ int main(int argc, char *argv[])
     io.SetParameters(engineParams);
 
     adios2::Engine engine = io.Open("Test", adios2::Mode::Write);
-    auto bpFloats = io.DefineVariable<float>("bpFloats", shape, start, count);
+    auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
 
     engine.LockWriterDefinitions();
 
     MPI_Barrier(writerComm);
 
     size_t step;
-    for(step = 0; step < 1000; ++step)
+    for(step = 0; step < 2000; ++step)
     {
+        MPI_Barrier(writerComm);
         timerNow = std::chrono::system_clock::now();
         duration = timerNow - timerStart;
         if(writerRank == 0)
@@ -81,12 +97,11 @@ int main(int argc, char *argv[])
             std::cout << "Engine " << adiosEngine << " Step " << step << " Duration " << duration.count() << std::endl;
         }
         engine.BeginStep();
-        engine.Put(bpFloats, myFloats.data());
+        engine.Put(varFloats, vecFloats.data());
         engine.EndStep();
     }
 
     engine.Close();
-
 
     size_t totalDatasize = 4000000 * step * writerSize;
     timerNow = std::chrono::system_clock::now();
