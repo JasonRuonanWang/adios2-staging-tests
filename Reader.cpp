@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     adios2::IO io = adios.DeclareIO("TestIO");
     io.SetEngine(adiosEngine);
     io.SetParameters(engineParams);
-    adios2::Engine engine = io.Open("Test", adios2::Mode::Read);
+    adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Read);
 
     adios2::Dims shape({(size_t)writerSize, 1000000});
     adios2::Dims start({(size_t)readerRank*wrRatio, 0});

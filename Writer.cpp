@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     io.SetEngine(adiosEngine);
     io.SetParameters(engineParams);
 
-    adios2::Engine engine = io.Open("Test", adios2::Mode::Write);
+    adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Write);
     auto varChars = io.DefineVariable<signed char>("varChars", shape, start, count);
     auto varUchars = io.DefineVariable<unsigned char>("varUchars", shape, start, count);
     auto varShorts = io.DefineVariable<signed short>("varShorts", shape, start, count);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     engine.LockWriterDefinitions();
 
     size_t step;
-    for(step = 0; step < 2000; ++step)
+    for(step = 0; step < 500; ++step)
     {
         MPI_Barrier(writerComm);
         timerNow = std::chrono::system_clock::now();
