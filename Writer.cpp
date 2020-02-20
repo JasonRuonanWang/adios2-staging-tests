@@ -9,19 +9,8 @@
 #include "common.h"
 
 
-
-adios2::Params engineParams = {
-    {"DataTransport","RDMA"},
-    {"ControlTransport","Scalable"},
-    {"QueueLimit","1"},
-    {"QueueFullPolicy","Block"}};
-
-double walltime = 1;
-
 int main(int argc, char *argv[])
 {
-
-    std::string adiosEngine = "ssc";
 
     if(argc >= 2)
     {
@@ -56,13 +45,24 @@ int main(int argc, char *argv[])
     std::vector<signed int> vecInts(datasize);
     std::vector<unsigned int> vecUints(datasize);
     std::vector<signed long> vecLongs(datasize);
-    std::vector<unsigned long> vecULongs(datasize);
+    std::vector<unsigned long> vecUlongs(datasize);
     std::vector<float> vecFloats(datasize);
     std::vector<double> vecDoubles(datasize);
     std::vector<std::complex<float>> vecCfloats(datasize);
-    std::vector<std::complex<double>> vecDfloats(datasize);
+    std::vector<std::complex<double>> vecCdoubles(datasize);
 
+    GenData(vecChars, 0, start, count, shape);
+    GenData(vecUchars, 0, start, count, shape);
+    GenData(vecShorts, 0, start, count, shape);
+    GenData(vecUshorts, 0, start, count, shape);
+    GenData(vecInts, 0, start, count, shape);
+    GenData(vecUints, 0, start, count, shape);
+    GenData(vecLongs, 0, start, count, shape);
+    GenData(vecUlongs, 0, start, count, shape);
     GenData(vecFloats, 0, start, count, shape);
+    GenData(vecDoubles, 0, start, count, shape);
+    GenData(vecCfloats, 0, start, count, shape);
+    GenData(vecCdoubles, 0, start, count, shape);
 
     auto timerStart = std::chrono::system_clock::now();
     auto timerNow = std::chrono::system_clock::now();
@@ -74,11 +74,20 @@ int main(int argc, char *argv[])
     io.SetParameters(engineParams);
 
     adios2::Engine engine = io.Open("Test", adios2::Mode::Write);
+    auto varChars = io.DefineVariable<signed char>("varChars", shape, start, count);
+    auto varUchars = io.DefineVariable<unsigned char>("varUchars", shape, start, count);
+    auto varShorts = io.DefineVariable<signed short>("varShorts", shape, start, count);
+    auto varUshorts = io.DefineVariable<unsigned short>("varUshorts", shape, start, count);
+    auto varInts = io.DefineVariable<signed int>("varInts", shape, start, count);
+    auto varUints = io.DefineVariable<unsigned int>("varUints", shape, start, count);
+    auto varLongs = io.DefineVariable<signed long>("varLongs", shape, start, count);
+    auto varUlongs = io.DefineVariable<unsigned long>("varUlongs", shape, start, count);
     auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
+    auto varDoubles = io.DefineVariable<double>("varDoubles", shape, start, count);
+    auto varCfloats = io.DefineVariable<std::complex<float>>("varCfloats", shape, start, count);
+    auto varCdoubles = io.DefineVariable<std::complex<double>>("varCdoubles", shape, start, count);
 
     engine.LockWriterDefinitions();
-
-    MPI_Barrier(writerComm);
 
     size_t step;
     for(step = 0; step < 2000; ++step)
@@ -91,15 +100,41 @@ int main(int argc, char *argv[])
             std::cout << "Engine " << adiosEngine << " Step " << step << " Duration " << duration.count() << std::endl;
         }
         engine.BeginStep();
+        engine.Put(varChars, vecChars.data());
+        engine.Put(varUchars, vecUchars.data());
+        engine.Put(varShorts, vecShorts.data());
+        engine.Put(varUshorts, vecUshorts.data());
+        engine.Put(varInts, vecInts.data());
+        engine.Put(varUints, vecUints.data());
+        engine.Put(varLongs, vecLongs.data());
+        engine.Put(varUlongs, vecUlongs.data());
         engine.Put(varFloats, vecFloats.data());
+        engine.Put(varDoubles, vecDoubles.data());
+        engine.Put(varCfloats, vecCfloats.data());
+        engine.Put(varCdoubles, vecCdoubles.data());
         engine.EndStep();
     }
 
     engine.Close();
 
-    size_t totalDatasize = 4000000 * step * writerSize;
+    size_t stepDatasize = sizeof(signed char)
+         +sizeof(unsigned char)
+         +sizeof(signed short)
+         +sizeof(unsigned short)
+         +sizeof(signed int)
+         +sizeof(unsigned int)
+         +sizeof(signed long)
+         +sizeof(unsigned long)
+         +sizeof(float)
+         +sizeof(double)
+         +sizeof(std::complex<float>)
+         +sizeof(std::complex<double>);
+
+    size_t totalDatasize = step * writerSize * shape[1] * stepDatasize;
     timerNow = std::chrono::system_clock::now();
     duration = timerNow - timerStart;
+
+    MPI_Barrier(MPI_COMM_WORLD);
 
     if(writerRank == 0)
     {
