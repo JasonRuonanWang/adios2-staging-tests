@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
     adios2::IO io = adios.DeclareIO("TestIO");
     io.SetEngine(adiosEngine);
     io.SetParameters(engineParams);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
     adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Read);
 
     adios2::Dims shape({(size_t)writerSize, 1000000});

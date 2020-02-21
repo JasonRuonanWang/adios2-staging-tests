@@ -4,7 +4,7 @@ std::string adiosEngine = "ssc";
 double walltime = 1;
 
 adios2::Params engineParams = {
-    {"DataTransport","RDMA"},
+//    {"DataTransport","RDMA"},
     {"ControlTransport","Scalable"},
     {"QueueLimit","1"},
     {"QueueFullPolicy","Block"}};

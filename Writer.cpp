@@ -37,6 +37,31 @@ int main(int argc, char *argv[])
     adios2::Dims start({(size_t)writerRank, 0});
     adios2::Dims count({1, 1000000});
 
+    auto timerStart = std::chrono::system_clock::now();
+    auto timerNow = std::chrono::system_clock::now();
+    std::chrono::duration<double> duration;
+
+    adios2::ADIOS adios(writerComm, adios2::DebugON);
+    adios2::IO io = adios.DeclareIO("TestIO");
+    io.SetEngine(adiosEngine);
+    io.SetParameters(engineParams);
+
+    adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Write);
+    auto varChars = io.DefineVariable<signed char>("varChars", shape, start, count);
+    auto varUchars = io.DefineVariable<unsigned char>("varUchars", shape, start, count);
+    auto varShorts = io.DefineVariable<signed short>("varShorts", shape, start, count);
+    auto varUshorts = io.DefineVariable<unsigned short>("varUshorts", shape, start, count);
+    auto varInts = io.DefineVariable<signed int>("varInts", shape, start, count);
+    auto varUints = io.DefineVariable<unsigned int>("varUints", shape, start, count);
+    auto varLongs = io.DefineVariable<signed long>("varLongs", shape, start, count);
+    auto varUlongs = io.DefineVariable<unsigned long>("varUlongs", shape, start, count);
+    auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
+    auto varDoubles = io.DefineVariable<double>("varDoubles", shape, start, count);
+    auto varCfloats = io.DefineVariable<std::complex<float>>("varCfloats", shape, start, count);
+    auto varCdoubles = io.DefineVariable<std::complex<double>>("varCdoubles", shape, start, count);
+
+    engine.LockWriterDefinitions();
+
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
     std::vector<signed char> vecChars(datasize);
     std::vector<unsigned char> vecUchars(datasize);
@@ -63,31 +88,6 @@ int main(int argc, char *argv[])
     GenData(vecDoubles, 0, start, count, shape);
     GenData(vecCfloats, 0, start, count, shape);
     GenData(vecCdoubles, 0, start, count, shape);
-
-    auto timerStart = std::chrono::system_clock::now();
-    auto timerNow = std::chrono::system_clock::now();
-    std::chrono::duration<double> duration;
-
-    adios2::ADIOS adios(writerComm, adios2::DebugON);
-    adios2::IO io = adios.DeclareIO("TestIO");
-    io.SetEngine(adiosEngine);
-    io.SetParameters(engineParams);
-
-    adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Write);
-    auto varChars = io.DefineVariable<signed char>("varChars", shape, start, count);
-    auto varUchars = io.DefineVariable<unsigned char>("varUchars", shape, start, count);
-    auto varShorts = io.DefineVariable<signed short>("varShorts", shape, start, count);
-    auto varUshorts = io.DefineVariable<unsigned short>("varUshorts", shape, start, count);
-    auto varInts = io.DefineVariable<signed int>("varInts", shape, start, count);
-    auto varUints = io.DefineVariable<unsigned int>("varUints", shape, start, count);
-    auto varLongs = io.DefineVariable<signed long>("varLongs", shape, start, count);
-    auto varUlongs = io.DefineVariable<unsigned long>("varUlongs", shape, start, count);
-    auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
-    auto varDoubles = io.DefineVariable<double>("varDoubles", shape, start, count);
-    auto varCfloats = io.DefineVariable<std::complex<float>>("varCfloats", shape, start, count);
-    auto varCdoubles = io.DefineVariable<std::complex<double>>("varCdoubles", shape, start, count);
-
-    engine.LockWriterDefinitions();
 
     size_t step;
     for(step = 0; step < 500; ++step)
