@@ -2,7 +2,7 @@ import sys
 import os
 
 project = "CSC143"
-walltime = 40
+walltime = 60
 
 ranksPerNode = 40
 cpusPerRank = 4
