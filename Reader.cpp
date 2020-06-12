@@ -3,6 +3,7 @@
 #include <numeric>
 #include <thread>
 #include <vector>
+#include <mpi.h>
 #include <adios2.h>
 #include "common.h"
 
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
     adios2::Variable<std::complex<float>> varCfloats;
     adios2::Variable<std::complex<double>> varCdoubles;
 
+    /*
     if(adiosEngine == "ssc")
     {
         varChars = io.InquireVariable<signed char>("varChars");
@@ -99,6 +101,7 @@ int main(int argc, char *argv[])
         varCfloats.SetSelection({start, count});
         varCdoubles.SetSelection({start, count});
     }
+    */
 
     while(true)
     {
@@ -155,6 +158,28 @@ int main(int argc, char *argv[])
         }
 
         engine.EndStep();
+
+        for(int r=0; r<readerSize; ++r)
+        {
+            MPI_Barrier(readerComm);
+            if(r == readerRank)
+            {
+                size_t s=0;
+                for(auto i : vecFloats){
+                    if(s < 16)
+                    {
+                        std::cout << i << "   ";
+                    }
+                    ++s;
+                    if(s == count[1])
+                    {
+                        std::cout << std::endl;
+                        s=0;
+                    }
+                }
+                std::cout << std::endl;
+            }
+        }
     }
 
     engine.Close();
@@ -163,6 +188,7 @@ int main(int argc, char *argv[])
 
     MPI_Barrier(MPI_COMM_WORLD);
 
+    /*
     VerifyData(vecChars, 0, start, count, shape, "varChars");
     VerifyData(vecUchars, 0, start, count, shape, "varUchars");
     VerifyData(vecShorts, 0, start, count, shape, "varShorts");
@@ -175,30 +201,8 @@ int main(int argc, char *argv[])
     VerifyData(vecDoubles, 0, start, count, shape, "varDoubles");
     VerifyData(vecCfloats, 0, start, count, shape, "varCfloats");
     VerifyData(vecCdoubles, 0, start, count, shape, "varCdoubles");
-
-    /*
-    for(int r=0; r<readerSize; ++r)
-    {
-        MPI_Barrier(readerComm);
-        if(r == readerRank)
-        {
-            size_t s=0;
-            for(auto i : vecFloats){
-                if(s < 16)
-                {
-                    std::cout << i << "   ";
-                }
-                ++s;
-                if(s == count[1])
-                {
-                    std::cout << std::endl;
-                    s=0;
-                }
-            }
-            std::cout << std::endl;
-        }
-    }
     */
+
 
     MPI_Finalize();
     if(readerRank == 0) std::cout << "Engine " << adiosEngine << " finished " << std::endl;

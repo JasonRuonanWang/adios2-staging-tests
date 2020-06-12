@@ -6,6 +6,7 @@ double walltime = 1;
 adios2::Params engineParams = {
 //    {"DataTransport","RDMA"},
     {"ControlTransport","Scalable"},
+    {"MpiMode","OneSidedFencePull"},
     {"QueueLimit","1"},
     {"QueueFullPolicy","Block"}};
 

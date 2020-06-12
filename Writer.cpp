@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     auto timerNow = std::chrono::system_clock::now();
     std::chrono::duration<double> duration;
 
-    adios2::ADIOS adios(writerComm, adios2::DebugON);
+    adios2::ADIOS adios(writerComm);
     adios2::IO io = adios.DeclareIO("TestIO");
     io.SetEngine(adiosEngine);
     io.SetParameters(engineParams);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     GenData(vecCdoubles, 0, start, count, shape);
 
     size_t step;
-    for(step = 0; step < 500; ++step)
+    for(step = 0; step < 2; ++step)
     {
         MPI_Barrier(writerComm);
         timerNow = std::chrono::system_clock::now();
