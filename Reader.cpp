@@ -72,37 +72,6 @@ int main(int argc, char *argv[])
     adios2::Variable<std::complex<float>> varCfloats;
     adios2::Variable<std::complex<double>> varCdoubles;
 
-    /*
-    if(adiosEngine == "ssc")
-    {
-        varChars = io.InquireVariable<signed char>("varChars");
-        varUchars = io.InquireVariable<unsigned char>("varUchars");
-        varShorts = io.InquireVariable<signed short>("varShorts");
-        varUshorts = io.InquireVariable<unsigned short>("varUshorts");
-        varInts = io.InquireVariable<signed int>("varInts");
-        varUints = io.InquireVariable<unsigned int>("varUints");
-        varLongs = io.InquireVariable<signed long>("varLongs");
-        varUlongs = io.InquireVariable<unsigned long>("varUlongs");
-        varFloats = io.InquireVariable<float>("varFloats");
-        varDoubles = io.InquireVariable<double>("varDoubles");
-        varCfloats = io.InquireVariable<std::complex<float>>("varCfloats");
-        varCdoubles = io.InquireVariable<std::complex<double>>("varCdoubles");
-
-        varChars.SetSelection({start, count});
-        varUchars.SetSelection({start, count});
-        varShorts.SetSelection({start, count});
-        varUshorts.SetSelection({start, count});
-        varInts.SetSelection({start, count});
-        varUints.SetSelection({start, count});
-        varLongs.SetSelection({start, count});
-        varUlongs.SetSelection({start, count});
-        varFloats.SetSelection({start, count});
-        varDoubles.SetSelection({start, count});
-        varCfloats.SetSelection({start, count});
-        varCdoubles.SetSelection({start, count});
-    }
-    */
-
     while(true)
     {
         auto ret = engine.BeginStep();
@@ -188,7 +157,6 @@ int main(int argc, char *argv[])
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    /*
     VerifyData(vecChars, 0, start, count, shape, "varChars");
     VerifyData(vecUchars, 0, start, count, shape, "varUchars");
     VerifyData(vecShorts, 0, start, count, shape, "varShorts");
@@ -201,7 +169,6 @@ int main(int argc, char *argv[])
     VerifyData(vecDoubles, 0, start, count, shape, "varDoubles");
     VerifyData(vecCfloats, 0, start, count, shape, "varCfloats");
     VerifyData(vecCdoubles, 0, start, count, shape, "varCdoubles");
-    */
 
 
     MPI_Finalize();
