@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     GenData(vecCdoubles, 0, start, count, shape);
 
     size_t step;
-    for(step = 0; step < 2; ++step)
+    for(step = 0; step < 1; ++step)
     {
         MPI_Barrier(writerComm);
         timerNow = std::chrono::system_clock::now();
