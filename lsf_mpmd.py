@@ -1,8 +1,8 @@
 import sys
 import os
 
-project = "CSC143"
-walltime = 60
+project = "CSC303"
+walltime = 10
 
 ranksPerNode = 40
 cpusPerRank = 4
@@ -36,10 +36,12 @@ ranksTotal = sum(ranks)
 
 SscErf = open(filename + ".ssc.erf","w")
 SstErf = open(filename + ".sst.erf","w")
+RdmaErf = open(filename + ".rdma.erf","w")
 ImpiErf = open(filename + ".impi.erf","w")
 
 SscJob = open(filename + ".ssc.job","w")
 SstJob = open(filename + ".sst.job","w")
+RdmaJob = open(filename + ".rdma.job","w")
 ImpiJob = open(filename + ".impi.job","w")
 
 s = 0
@@ -47,11 +49,13 @@ for app in appsFullPath:
     SscErf.write("app {0}: {1} ssc".format(s, app) + "\n")
     ImpiErf.write("app {0}: {1} insitumpi".format(s, app) + "\n")
     SstErf.write("app {0}: {1} sst".format(s, app) + "\n")
+    RdmaErf.write("app {0}: {1} rdma".format(s, app) + "\n")
     s = s + 1
 
 for key, value in params.items():
     SscErf.write(key + ": " + value + "\n")
     SstErf.write(key + ": " + value + "\n")
+    RdmaErf.write(key + ": " + value + "\n")
     ImpiErf.write(key + ": " + value + "\n")
 
 for app in ranks:
@@ -62,6 +66,7 @@ for app in ranks:
         line = "rank: {0}: {{ host: {1}; cpu: {{{2}-{3}}} }} : app {4}".format(rankCurrent, nodes, cpuCurrent, cpuCurrent + 3, appCurrent)
         SscErf.write(line + "\n")
         SstErf.write(line + "\n")
+        RdmaErf.write(line + "\n")
         ImpiErf.write(line + "\n")
         cpuCurrent = cpuCurrent + cpusPerRank
         if cpuCurrent == 84:
@@ -89,6 +94,13 @@ SstJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
 SstJob.write("cd {0}".format(os.getcwd()) + "\n")
 SstJob.write("jsrun --erf_input {0}/{1}.sst.erf".format(os.getcwd(),filename) + "\n")
 
+RdmaJob.write("#!/bin/bash" + "\n")
+RdmaJob.write("#BSUB -P {0}".format(project) + "\n")
+RdmaJob.write("#BSUB -J job_rdma_{0}".format(filename) + "\n")
+RdmaJob.write("#BSUB -W {0}".format(walltime) + "\n")
+RdmaJob.write("#BSUB -nnodes {0}".format(nodes) + "\n")
+RdmaJob.write("cd {0}".format(os.getcwd()) + "\n")
+RdmaJob.write("jsrun --erf_input {0}/{1}.rdma.erf".format(os.getcwd(),filename) + "\n")
 
 ImpiJob.write("#!/bin/bash" + "\n")
 ImpiJob.write("#BSUB -P {0}".format(project) + "\n")
