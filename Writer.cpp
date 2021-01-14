@@ -17,13 +17,15 @@ int main(int argc, char *argv[])
         adiosEngine = argv[1];
         if(adiosEngine == "rdma")
         {
-            adiosEngine = "ssc";
+            adiosEngine = "sst";
             engineParams["DataTransport"] = "RDMA";
         }
     }
 
     int color=0;
-    MPI_Init(&argc, &argv);
+    int provided;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
+//    MPI_Init(&argc, &argv);
     int writerRank, writerSize;
     int worldRank, worldSize;
     MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
@@ -33,9 +35,9 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(writerComm, &writerRank);
     MPI_Comm_size(writerComm, &writerSize);
 
-    adios2::Dims shape({(size_t)writerSize, 10000000});
+    adios2::Dims shape({(size_t)writerSize, 100000000});
     adios2::Dims start({(size_t)writerRank, 0});
-    adios2::Dims count({1, 10000000});
+    adios2::Dims count({1, 100000000});
 
     auto timerStart = std::chrono::system_clock::now();
     auto timerNow = std::chrono::system_clock::now();
@@ -49,7 +51,7 @@ int main(int argc, char *argv[])
     adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Write);
     auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
 
-    engine.LockWriterDefinitions();
+//    engine.LockWriterDefinitions();
 
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
     std::vector<float> vecFloats(datasize);
@@ -57,7 +59,7 @@ int main(int argc, char *argv[])
     GenData(vecFloats, 0, start, count, shape);
 
     size_t step;
-    for(step = 0; step < 100; ++step)
+    for(step = 0; step < 20; ++step)
     {
         MPI_Barrier(writerComm);
         timerNow = std::chrono::system_clock::now();
@@ -69,6 +71,7 @@ int main(int argc, char *argv[])
         engine.BeginStep();
         engine.Put(varFloats, vecFloats.data());
         engine.EndStep();
+        std::this_thread::sleep_for(std::chrono::seconds(sleepSeconds));
     }
 
     engine.Close();
@@ -88,7 +91,6 @@ int main(int argc, char *argv[])
         std::cout << "===============================================================" << std::endl;
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize();
 

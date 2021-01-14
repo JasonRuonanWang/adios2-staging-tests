@@ -21,7 +21,8 @@ int main(int argc, char *argv[])
     }
 
     int color=1;
-    MPI_Init(&argc, &argv);
+    int provided;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
     int readerRank, readerSize;
     int worldRank, worldSize;
     MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
 
         if(engine.CurrentStep() == 0)
         {
-            engine.LockReaderSelections();
+//            engine.LockReaderSelections();
         }
 
         engine.EndStep();

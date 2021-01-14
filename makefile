@@ -1,6 +1,6 @@
 all:
-	mpic++ $(shell adios2-config --cxx) Reader.cpp -o reader
-	mpic++ $(shell adios2-config --cxx) Writer.cpp -o writer
+	mpic++ Writer.cpp -o writer $(shell adios2-config --cxx)
+	mpic++ Reader.cpp -o reader $(shell adios2-config --cxx)
 
 d:
 	rm -rf *.sst job_* core.* *.erf *.job
