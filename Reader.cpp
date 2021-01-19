@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
 
     adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Read);
 
-    adios2::Dims shape({(size_t)writerSize, 10000000});
+    adios2::Dims shape({(size_t)writerSize, 100000000});
     adios2::Dims start({(size_t)readerRank*wrRatio, 0});
-    adios2::Dims count({(size_t)wrRatio, 10000000});
+    adios2::Dims count({(size_t)wrRatio, 100000000});
 
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
 
