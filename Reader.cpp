@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         adiosEngine = argv[1];
         if(adiosEngine == "rdma")
         {
-            adiosEngine = "ssc";
+            adiosEngine = "sst";
             engineParams["DataTransport"] = "RDMA";
         }
     }
