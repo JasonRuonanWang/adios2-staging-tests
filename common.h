@@ -3,8 +3,9 @@ std::string adiosEngine = "ssc";
 
 adios2::Params engineParams = {
 //    {"Threading","True"},
-    {"ControlTransport","Scalable"},
+//    {"ControlTransport","Scalable"},
     {"QueueLimit","1"},
+    {"DataTransport", "RDMA"},
     {"QueueFullPolicy","Block"}};
 
 int sleepSeconds = 1;

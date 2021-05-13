@@ -13,11 +13,6 @@ int main(int argc, char *argv[])
     if(argc >= 2)
     {
         adiosEngine = argv[1];
-        if(adiosEngine == "rdma")
-        {
-            adiosEngine = "sst";
-            engineParams["DataTransport"] = "RDMA";
-        }
     }
 
     int color=1;
