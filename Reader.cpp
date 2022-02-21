@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
         if(engine.CurrentStep() == 0)
         {
-//            engine.LockReaderSelections();
+            engine.LockReaderSelections();
         }
 
         engine.EndStep();

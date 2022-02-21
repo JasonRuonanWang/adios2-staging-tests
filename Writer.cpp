@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Write);
     auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
 
-//    engine.LockWriterDefinitions();
+    engine.LockWriterDefinitions();
 
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
     std::vector<float> vecFloats(datasize);
