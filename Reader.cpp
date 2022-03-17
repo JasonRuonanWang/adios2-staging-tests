@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
 
     adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Read);
 
-    adios2::Dims shape({(size_t)writerSize, 100000000});
+    adios2::Dims shape({(size_t)writerSize, 1000});
     adios2::Dims start({(size_t)readerRank*wrRatio, 0});
-    adios2::Dims count({(size_t)wrRatio, 100000000});
+    adios2::Dims count({(size_t)wrRatio, 1000});
 
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
 
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
         if(engine.CurrentStep() == 0)
         {
-            engine.LockReaderSelections();
+//            engine.LockReaderSelections();
         }
 
         engine.EndStep();
@@ -81,6 +81,6 @@ int main(int argc, char *argv[])
 
 
     MPI_Finalize();
-    if(readerRank == 0) std::cout << "Engine " << adiosEngine << " finished " << std::endl;
+    if(readerRank == 0) std::cout << "Engine " << " " << readerSize <<  " Readers, " << adiosEngine << " finished " << std::endl;
     return 0;
 }

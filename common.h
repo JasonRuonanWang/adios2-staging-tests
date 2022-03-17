@@ -4,11 +4,14 @@ std::string adiosEngine = "ssc";
 adios2::Params engineParams = {
 //    {"Threading","True"},
 //    {"ControlTransport","Scalable"},
-    {"QueueLimit","1"},
-    {"DataTransport", "RDMA"},
-    {"QueueFullPolicy","Block"}};
+//    {"QueueLimit","1"},
+//    {"DataTransport", "RDMA"},
+//    {"QueueFullPolicy","Block"}
+    {"EngineMode","naive"},
+    {"Verbose","0"}
+};
 
-int sleepSeconds = 1;
+int sleepSeconds = 0;
 
 template <class T>
 void GenDataRecursive(std::vector<size_t> start, std::vector<size_t> count, std::vector<size_t> shape, size_t n0, size_t y, std::vector<T> &vec)

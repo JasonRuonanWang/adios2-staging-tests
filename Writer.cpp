@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(writerComm, &writerRank);
     MPI_Comm_size(writerComm, &writerSize);
 
-    adios2::Dims shape({(size_t)writerSize, 100000000});
+    adios2::Dims shape({(size_t)writerSize, 1000});
     adios2::Dims start({(size_t)writerRank, 0});
-    adios2::Dims count({1, 100000000});
+    adios2::Dims count({1, 1000});
 
     auto timerStart = std::chrono::system_clock::now();
     auto timerNow = std::chrono::system_clock::now();
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     adios2::Engine engine = io.Open("Test" + std::to_string(writerSize), adios2::Mode::Write);
     auto varFloats = io.DefineVariable<float>("varFloats", shape, start, count);
 
-    engine.LockWriterDefinitions();
+//    engine.LockWriterDefinitions();
 
     size_t datasize = std::accumulate(count.begin(), count.end(), 1, std::multiplies<size_t>());
     std::vector<float> vecFloats(datasize);
@@ -57,14 +57,10 @@ int main(int argc, char *argv[])
         MPI_Barrier(writerComm);
         timerNow = std::chrono::system_clock::now();
         duration = timerNow - timerStart;
-        if(writerRank == 0)
-        {
-            std::cout << "Engine " << adiosEngine << " Step " << step << " Duration " << duration.count() << std::endl;
-        }
         engine.BeginStep();
         engine.Put(varFloats, vecFloats.data());
         engine.EndStep();
-        std::this_thread::sleep_for(std::chrono::seconds(sleepSeconds));
+//        std::this_thread::sleep_for(std::chrono::seconds(sleepSeconds));
     }
 
     engine.Close();
@@ -80,7 +76,7 @@ int main(int argc, char *argv[])
     if(writerRank == 0)
     {
         std::cout << "===============================================================" << std::endl;
-        std::cout << adiosEngine << " time " << duration.count() << " seconds, " << step << " steps, " << "total data size " << totalDatasize / 1000000000 << " GB, data rate " <<  totalDatasize / duration.count() / 1000000000 << " GB/s" << std::endl;
+        std::cout << adiosEngine << " " << writerSize <<  " Writers, " << " time " << duration.count() << " seconds, " << step << " steps, " << "total data size " << totalDatasize / 1000000000 << " GB, data rate " <<  totalDatasize / duration.count() / 1000000000 << " GB/s" << std::endl;
         std::cout << "===============================================================" << std::endl;
     }
 
